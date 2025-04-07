@@ -33,18 +33,44 @@ public class JwtUtils {
     }
 
     public boolean isRefreshToken(String token) {
-        return validateToken(token);
-    }
-
-    public boolean validateToken(String token) {
         try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
             if (revokedTokens.contains(token)) return false;
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+
+            return "refresh".equals(claims.get("type"));  // validación específica
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
+
+
+//    public boolean validateToken(String token) {
+//        try {
+//            if (revokedTokens.contains(token)) return false;
+//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+//            return true;
+//        } catch (JwtException | IllegalArgumentException e) {
+//            return false;
+//        }
+//    }
+    public boolean validateToken(String token) {
+        if (revokedTokens.contains(token)) {
+            throw new JwtException("Token revocado");
+        }
+
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new JwtException("Token inválido");
+        }
+    }
+
 
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
@@ -71,4 +97,18 @@ public class JwtUtils {
     public void revokeToken(String token) {
         revokedTokens.add(token);
     }
+
+    public String generateRefreshToken(User user) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .setSubject(user.getUsername())
+                .claim("roles", user.getRoles())
+                .claim("type", "refresh")  // <- aquí está la diferencia clave
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(now.plusSeconds(604800))) // 7 días
+                .signWith(key)
+                .compact();
+    }
+
+
 }
