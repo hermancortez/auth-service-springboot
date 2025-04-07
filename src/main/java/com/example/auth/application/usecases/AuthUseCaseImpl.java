@@ -32,10 +32,12 @@ public class AuthUseCaseImpl implements AuthUseCase {
         }
 
         String jwt = jwtUtils.generateToken(user);
+        String refresh = jwtUtils.generateRefreshToken(user); // <-- necesitas este método
         Instant now = Instant.now();
         Instant expiry = now.plusSeconds(3600);
 
-        return new Token(jwt, now, expiry, false);
+        return new Token(jwt, refresh, now, expiry);
+
     }
 
     @Override
@@ -43,19 +45,30 @@ public class AuthUseCaseImpl implements AuthUseCase {
         if (!jwtUtils.isRefreshToken(refreshToken)) {
             throw new RuntimeException("Refresh token inválido");
         }
+
         String username = jwtUtils.extractUsername(refreshToken);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        String newToken = jwtUtils.generateToken(user);
+        String newAccessToken = jwtUtils.generateToken(user);
+        String newRefreshToken = jwtUtils.generateRefreshToken(user);
+
         Instant now = Instant.now();
         Instant expiry = now.plusSeconds(3600);
 
-        return new Token(newToken, now, expiry, false);
+        return new Token(newAccessToken, newRefreshToken, now, expiry);
     }
+
 
     @Override
     public void logout(String accessToken) {
         jwtUtils.revokeToken(accessToken);
+    }
+
+    @Override
+    public User getCurrentUser(String token) {
+        String username = jwtUtils.extractUsername(token);
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 }
