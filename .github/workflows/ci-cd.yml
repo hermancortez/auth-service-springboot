@@ -31,6 +31,7 @@ jobs:
         run: >
           mvn sonar:sonar \
             -Dsonar.projectKey=auth-service \
+            -Dsonar.organization=hermancortez \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
