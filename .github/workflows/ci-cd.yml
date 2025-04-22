@@ -64,19 +64,20 @@ jobs:
       - name: 🚀 Push imagen a DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/auth-service:latest
 
-      - name: 📦 Setup kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
+  # El siguiente bloque está desactivado porque no se desplegará aún
+  # - name: 📦 Setup kubectl
+  #   uses: azure/setup-kubectl@v3
+  #   with:
+  #     version: 'latest'
 
-      - name: 📁 Crear directorio .kube
-        run: mkdir -p $HOME/.kube
+  # - name: 📁 Crear directorio .kube
+  #   run: mkdir -p $HOME/.kube
 
-      - name: 📄 Decodificar Kubeconfig
-        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
+  # - name: 📄 Decodificar Kubeconfig
+  #   run: echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
 
-      - name: ☸️ Desplegar en Kubernetes
-        run: |
-          kubectl apply -f k8s/configmap.yaml
-          kubectl apply -f k8s/deployment-dev.yaml
-          kubectl apply -f k8s/service.yaml
+  # - name: ☸️ Desplegar en Kubernetes
+  #   run: |
+  #     kubectl apply -f k8s/configmap.yaml
+  #     kubectl apply -f k8s/deployment-dev.yaml
+  #     kubectl apply -f k8s/service.yaml
