@@ -1,0 +1,11 @@
+<rules>
+  <rule key="java:S106" enabled="true"/>
+  <rule key="java:S1192" enabled="true"/>
+  <rule key="java:S3776" enabled="true"/>
+  <rule key="java:S00122" enabled="true"/>
+  <rule key="java:S138" enabled="true"/>
+  <rule key="java:S00125" enabled="true"/>
+  <rule key="java:S112" enabled="true"/>
+  <rule key="java:S2076" enabled="true"/>
+  <rule key="java:S2078" enabled="true"/>
+</rules>
