@@ -77,6 +77,6 @@ jobs:
 
       - name: ☸️ Desplegar en Kubernetes
         run: |
-          kubectl apply -f configmap.yaml
-          kubectl apply -f deployment-dev.yaml
-          kubectl apply -f service.yaml
+          kubectl apply -f k8s/configmap.yaml
+          kubectl apply -f k8s/deployment-dev.yaml
+          kubectl apply -f k8s/service.yaml
